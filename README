@@ -1,0 +1,72 @@
+= acts_as_datable plugin
+
+	acts_as_datable allow you to display a year/month based archive list on a given model
+
+== Install
+
+   `script/plugin install git://github.com/cedricbousmanne/acts_as_datable.git`
+
+== Usage
+
+	In your model (basic):
+
+	class Post < ActiveRecord::Base
+		acts_as_datable
+	end
+	
+	You can also pass some arguments to the method : 
+	
+	* <tt>:on</tt> 
+	* <tt>:order</tt> 
+	* <tt>:conditions</tt> 
+	
+	Examples: 
+	
+	acts_as_datable :conditions => ["enabled = ?", true]
+	acts_as_datable :conditions => ["enabled = ?", true], :on => :published_at
+	acts_as_datable :conditions => ["enabled = ?", true], :on => :published_at, :order => "ASC"
+
+	In your view:
+	
+	Display year/month based archive list:
+	<%= date_based_archive(Post.collection) %>
+	
+	Display a single year based archive list (ie: only year 2000):
+	<%= date_based_archive(Post.months_of_year(2000)) %>
+
+=== Produces
+
+   <ul>
+     <li class='actsasdatable-year'><a href="/posts/2010">2010</a>
+       <ul class='actsasdatable-months'>
+         <li class='actsasdatable-month'><a href="/posts/2010/1">january</a></li>
+         <li class='actsasdatable-month'><a href="/posts/2010/2">february</a></li>
+         <li class='actsasdatable-month'><a href="/posts/2010/3">march</a></li>
+       </ul>
+     </li>
+   </ul>
+   
+	Note : a CSS class ".current" is added to "<li>" elements if neccessary.
+
+== Routing
+
+	If you want to generate nice and clean url, add this route to your config/routes.rb
+
+	map.connect 'posts/date/:year/:month', :controller => :posts, :year => :year, :month => nil, :requirements => {:year => /\d{4}/, :month => /\d{1,2}/}
+
+== Localization
+
+	acts_as_datable uses i18n to display months names in the archive list. Therefore, you will need a date/time format in your localization files : 
+	
+	fr:
+	  date:
+	    formats:
+	      month_name: "%B"
+	  time:
+	    formats:
+	      month_name: "%B"
+	
+== Contact
+
+	This plugin has been written by Cédric Bousmanne. 
+	You can find contact information on my personnal page : http://cedricbousmanne.com/
